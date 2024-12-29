@@ -20,7 +20,7 @@ type (
 
 func New() *implManager {
 	return &implManager{
-		router: newRouter(&segment{}),
+		router: newRouter(newSegment()),
 	}
 }
 
