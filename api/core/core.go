@@ -3,11 +3,22 @@
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 */
 
-package api
+package core
+
+import "github.com/archnum/sdk.http/api/context"
 
 type (
-	HandlerFunc func(ctx Context) error
+	Handler interface {
+		Serve(ctx context.Context) error
+	}
+
+	HandlerFunc    func(ctx context.Context) error
+	MiddlewareFunc func(handler Handler) Handler
 )
+
+func (fn HandlerFunc) Serve(ctx context.Context) error {
+	return fn(ctx)
+}
 
 /*
 ####### END ############################################################################################################
