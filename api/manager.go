@@ -3,20 +3,34 @@
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 */
 
-package util
+package api
 
 import "net/http"
 
-const (
-	HeaderXRequestID = "X-Request-Id"
+type (
+	Manager interface {
+		http.Handler
+		Router() Router
+	}
+
+	implManager struct {
+		router Router
+	}
 )
 
-func RequestID(r *http.Request) string {
-	return r.Header.Get(HeaderXRequestID)
+func New() *implManager {
+	return &implManager{
+		router: newRouter(&segment{}),
+	}
 }
 
-func SetRequestID(r *http.Request, id string) {
-	r.Header.Set(HeaderXRequestID, id)
+func (impl *implManager) Router() Router {
+	return impl.router
+}
+
+func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	_ = newContext(w, r)
+	w.WriteHeader(204) // TODO
 }
 
 /*
