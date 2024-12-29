@@ -30,15 +30,16 @@ func newRouter(seg *segment) *implRouter {
 
 func (impl *implRouter) Mount(pattern string, fn func(router Router)) {
 	seg := impl.seg
-	var ok bool
 
 	for _, s := range strings.Split(pattern, "/") {
 		if s == "" {
 			continue
 		}
 
-		seg, ok = seg.childs[s]
-		if !ok {
+		tmp, ok := seg.childs[s]
+		if ok {
+			seg = tmp
+		} else {
 			seg.childs[s] = newSegment()
 			seg = seg.childs[s]
 		}
@@ -49,15 +50,16 @@ func (impl *implRouter) Mount(pattern string, fn func(router Router)) {
 
 func (impl *implRouter) handle(method string, pattern string, fn HandlerFunc) {
 	seg := impl.seg
-	var ok bool
 
 	for _, s := range strings.Split(pattern, "/") {
 		if s == "" {
 			continue
 		}
 
-		seg, ok = seg.childs[s]
-		if !ok {
+		tmp, ok := seg.childs[s]
+		if ok {
+			seg = tmp
+		} else {
 			seg.childs[s] = newSegment()
 			seg = seg.childs[s]
 		}
