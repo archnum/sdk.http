@@ -5,7 +5,10 @@
 
 package api
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+)
 
 type (
 	Manager interface {
@@ -14,7 +17,7 @@ type (
 	}
 
 	implManager struct {
-		router Router
+		router *implRouter
 	}
 )
 
@@ -29,7 +32,27 @@ func (impl *implManager) Router() Router {
 }
 
 func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	_ = newContext(w, r)
+	ctx := newContext(w, r)
+	seg := impl.router.seg
+	var ok bool
+
+	for _, s := range strings.Split(r.URL.EscapedPath(), "/") {
+		if s == "" {
+			continue
+		}
+
+		seg, ok = seg.childs[s]
+		if !ok {
+			break
+		}
+	}
+
+	if seg != nil {
+		if fn, ok := seg.fns[r.Method]; ok {
+			_ = fn(ctx)
+		}
+	}
+
 	w.WriteHeader(204) // TODO
 }
 
