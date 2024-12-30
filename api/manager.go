@@ -20,13 +20,21 @@ type (
 	}
 
 	implManager struct {
-		router *implRouter
+		router   *implRouter
+		notFound core.Handler
 	}
 )
 
-func New() *implManager {
+func New(p *Params) *implManager {
+	if p == nil {
+		p = &Params{}
+	}
+
+	p.fix()
+
 	return &implManager{
-		router: newRouter(newSegment()),
+		router:   newRouter(newSegment()),
+		notFound: p.NotFound,
 	}
 }
 
@@ -34,10 +42,10 @@ func (impl *implManager) Router() Router {
 	return impl.router
 }
 
-func notFound(w http.ResponseWriter) core.Handler {
+func notFound() core.Handler {
 	return core.HandlerFunc(
-		func(_ context.Context) error {
-			w.WriteHeader(http.StatusNotFound)
+		func(ctx context.Context) error {
+			ctx.ResponseWriter().WriteHeader(http.StatusNotFound)
 			return nil
 		},
 	)
@@ -92,7 +100,7 @@ func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		seg, ok = seg.nextSegment(ctx, s)
 		if !ok {
-			serve(wrap(mws, notFound(w)), ctx) //----------------------------------------------------------- 404 -------
+			serve(wrap(mws, impl.notFound), ctx) //--------------------------------------------------------- 404 -------
 			return
 		}
 

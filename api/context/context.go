@@ -9,23 +9,28 @@ import "net/http"
 
 type (
 	Context interface {
+		ResponseWriter() http.ResponseWriter
 		AddURLParam(name, value string)
 		URLParam(name string) (string, bool)
 	}
 
 	implContext struct {
-		response http.ResponseWriter
-		request  *http.Request
-		params   map[string]string
+		responseWriter http.ResponseWriter
+		request        *http.Request
+		params         map[string]string
 	}
 )
 
 func New(w http.ResponseWriter, r *http.Request) *implContext {
 	return &implContext{
-		response: w,
-		request:  r,
-		params:   make(map[string]string),
+		responseWriter: w,
+		request:        r,
+		params:         make(map[string]string),
 	}
+}
+
+func (ctx *implContext) ResponseWriter() http.ResponseWriter {
+	return ctx.responseWriter
 }
 
 func (ctx *implContext) AddURLParam(name, value string) {
