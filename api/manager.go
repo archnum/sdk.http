@@ -49,7 +49,7 @@ func methodNotAllowed(w http.ResponseWriter, seg *segment) core.Handler {
 			allowedMethods := seg.allowedMethods()
 
 			if len(allowedMethods) > 0 {
-				w.Header().Set("Allow", strings.Join(append(allowedMethods, http.MethodOptions), ", "))
+				w.Header().Set("Allow", strings.Join(allowedMethods, ", "))
 			}
 
 			w.WriteHeader(http.StatusMethodNotAllowed)
