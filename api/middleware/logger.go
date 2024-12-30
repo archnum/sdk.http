@@ -7,6 +7,7 @@ package middleware
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/archnum/sdk.base/logger"
 	"github.com/archnum/sdk.http/api/context"
@@ -17,7 +18,13 @@ func Logger(logger *logger.Logger) func(core.Handler) core.Handler {
 	return func(next core.Handler) core.Handler {
 		return core.HandlerFunc(
 			func(ctx context.Context) error {
-				fmt.Println("LOGGER middleware")
+				// TODO
+				t0 := time.Now()
+				defer func() {
+					d := time.Since(t0)
+					fmt.Println(d)
+				}()
+
 				return next.Serve(ctx)
 			},
 		)

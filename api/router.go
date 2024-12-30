@@ -22,6 +22,7 @@ type (
 		Mount(pattern string, fn func(router Router))
 		Delete(pattern string, fn core.HandlerFunc)
 		Get(pattern string, fn core.HandlerFunc)
+		Options(pattern string, fn core.HandlerFunc)
 		Patch(pattern string, fn core.HandlerFunc)
 		Post(pattern string, fn core.HandlerFunc)
 		Put(pattern string, fn core.HandlerFunc)
@@ -90,6 +91,10 @@ func (impl *implRouter) Delete(pattern string, fn core.HandlerFunc) {
 
 func (impl *implRouter) Get(pattern string, fn core.HandlerFunc) {
 	impl.handle(http.MethodGet, pattern, fn)
+}
+
+func (impl *implRouter) Options(pattern string, fn core.HandlerFunc) {
+	impl.handle(http.MethodOptions, pattern, fn)
 }
 
 func (impl *implRouter) Patch(pattern string, fn core.HandlerFunc) {

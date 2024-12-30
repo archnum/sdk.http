@@ -51,6 +51,16 @@ func (seg *segment) nextSegment(ctx context.Context, s string) (*segment, bool) 
 	return nil, false
 }
 
+func (seg *segment) allowedMethods() []string {
+	list := make([]string, 0, len(seg.fns))
+
+	for method := range seg.fns {
+		list = append(list, method)
+	}
+
+	return list
+}
+
 /*
 ####### END ############################################################################################################
 */

@@ -34,12 +34,46 @@ func (impl *implManager) Router() Router {
 	return impl.router
 }
 
+func notFound(w http.ResponseWriter, r *http.Request) core.Handler {
+	return core.HandlerFunc(
+		func(_ context.Context) error {
+			w.WriteHeader(http.StatusNotFound)
+			return nil
+		},
+	)
+}
+
+func methodNotAllowed(w http.ResponseWriter, seg *segment) core.Handler {
+	return core.HandlerFunc(
+		func(_ context.Context) error {
+			allowedMethods := seg.allowedMethods()
+
+			if len(allowedMethods) > 0 {
+				w.Header().Set("Allow", strings.Join(append(allowedMethods, http.MethodOptions), ", "))
+			}
+
+			w.WriteHeader(http.StatusMethodNotAllowed)
+
+			return nil
+		},
+	)
+}
+
 func wrap(middlewares []core.MiddlewareFunc, handler core.Handler) core.Handler {
 	for i := len(middlewares) - 1; i >= 0; i-- {
 		handler = middlewares[i](handler)
 	}
 
 	return handler
+}
+
+func serve(handler core.Handler, ctx context.Context) {
+	err := handler.Serve(ctx)
+	if err == nil {
+		return
+	}
+
+	// TODO
 }
 
 func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -58,8 +92,7 @@ func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		seg, ok = seg.nextSegment(ctx, s)
 		if !ok {
-			// TODO
-			w.WriteHeader(404) // AFAC
+			serve(wrap(mws, notFound(w, r)), ctx) //-------------------------------------------------------- 404 -------
 			return
 		}
 
@@ -68,20 +101,11 @@ func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	fn, ok := seg.fns[r.Method]
 	if !ok {
-		// TODO
-		w.WriteHeader(405) // AFAC
+		serve(wrap(mws, methodNotAllowed(w, seg)), ctx) //-------------------------------------------------- 405 -------
 		return
 	}
 
-	err := wrap(mws, fn).Serve(ctx)
-	if err == nil {
-		w.WriteHeader(204) // AFAC
-		return
-	}
-
-	// TODO
-
-	w.WriteHeader(500) // AFAC
+	serve(wrap(mws, fn), ctx)
 }
 
 /*

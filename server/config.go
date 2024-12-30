@@ -22,12 +22,12 @@ const (
 type (
 	Config struct {
 		Addr         string        `dm:"addr"`
-		IdleTimeout  time.Duration `dm:"idle_timeout"`
-		ReadTimeout  time.Duration `dm:"read_timeout"`
-		WriteTimeout time.Duration `dm:"write_timeout"`
 		CertFile     string        `dm:"cert_file"`
 		KeyFile      string        `dm:"key_file"`
 		CAFile       string        `dm:"ca_file"`
+		IdleTimeout  time.Duration `dm:"idle_timeout"`
+		ReadTimeout  time.Duration `dm:"read_timeout"`
+		WriteTimeout time.Duration `dm:"write_timeout"`
 	}
 )
 
