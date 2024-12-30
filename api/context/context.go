@@ -10,6 +10,7 @@ import "net/http"
 type (
 	Context interface {
 		ResponseWriter() http.ResponseWriter
+		Request() *http.Request
 		AddURLParam(name, value string)
 		URLParam(name string) (string, bool)
 		WriteError(err ErrorWithStatus)
@@ -32,6 +33,10 @@ func New(w http.ResponseWriter, r *http.Request) *implContext {
 
 func (ctx *implContext) ResponseWriter() http.ResponseWriter {
 	return ctx.responseWriter
+}
+
+func (ctx *implContext) Request() *http.Request {
+	return ctx.request
 }
 
 func (ctx *implContext) AddURLParam(name, value string) {
