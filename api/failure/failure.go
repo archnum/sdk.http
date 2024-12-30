@@ -31,6 +31,10 @@ func WithMessage(status int, cause error, msg string, kvs ...kv.KeyValue) *Failu
 	}
 }
 
+func (f *Failure) Status() int {
+	return f.status
+}
+
 /*
 ####### END ############################################################################################################
 */

@@ -3,26 +3,14 @@
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 */
 
-package api
-
-import "github.com/archnum/sdk.http/api/core"
+package context
 
 type (
-	Params struct {
-		NotFound         func() core.Handler
-		MethodNotAllowed func(allowedMethods []string) core.Handler
+	ErrorWithStatus interface {
+		error
+		Status() int
 	}
 )
-
-func (p *Params) fix() {
-	if p.NotFound == nil {
-		p.NotFound = notFound
-	}
-
-	if p.MethodNotAllowed == nil {
-		p.MethodNotAllowed = methodNotAllowed
-	}
-}
 
 /*
 ####### END ############################################################################################################

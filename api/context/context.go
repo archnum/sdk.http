@@ -12,6 +12,7 @@ type (
 		ResponseWriter() http.ResponseWriter
 		AddURLParam(name, value string)
 		URLParam(name string) (string, bool)
+		WriteError(err ErrorWithStatus)
 	}
 
 	implContext struct {
@@ -40,6 +41,10 @@ func (ctx *implContext) AddURLParam(name, value string) {
 func (ctx *implContext) URLParam(name string) (string, bool) {
 	value, ok := ctx.params[name]
 	return value, ok
+}
+
+func (ctx *implContext) WriteError(err ErrorWithStatus) {
+	// TODO
 }
 
 /*
