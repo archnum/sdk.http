@@ -45,6 +45,7 @@ func (ctx *implContext) URLParam(name string) (string, bool) {
 
 func (ctx *implContext) WriteError(err ErrorWithStatus) {
 	// TODO
+	ctx.responseWriter.WriteHeader(500)
 }
 
 /*
