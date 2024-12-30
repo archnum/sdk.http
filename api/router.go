@@ -12,10 +12,6 @@ import (
 	"github.com/archnum/sdk.http/api/core"
 )
 
-const (
-	_paramPrefix = ":"
-)
-
 type (
 	Router interface {
 		Use(middlewares ...core.MiddlewareFunc)
@@ -55,6 +51,7 @@ func (impl *implRouter) Mount(pattern string, fn func(router Router)) {
 		if ok {
 			seg = tmp
 		} else {
+			seg.maybeSetParam(s)
 			seg.childs[s] = newSegment()
 			seg = seg.childs[s]
 		}
@@ -74,9 +71,8 @@ func (impl *implRouter) handle(method string, pattern string, fn core.HandlerFun
 		tmp, ok := seg.childs[s]
 		if ok {
 			seg = tmp
-		} else if param := strings.TrimPrefix(s, _paramPrefix); param != s {
-			seg.param = param
 		} else {
+			seg.maybeSetParam(s)
 			seg.childs[s] = newSegment()
 			seg = seg.childs[s]
 		}

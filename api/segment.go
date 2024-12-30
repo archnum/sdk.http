@@ -6,8 +6,14 @@
 package api
 
 import (
+	"strings"
+
 	"github.com/archnum/sdk.http/api/context"
 	"github.com/archnum/sdk.http/api/core"
+)
+
+const (
+	_paramPrefix = ":"
 )
 
 type (
@@ -22,6 +28,12 @@ type (
 func newSegment() *segment {
 	return &segment{
 		childs: make(map[string]*segment),
+	}
+}
+
+func (seg *segment) maybeSetParam(s string) {
+	if param := strings.TrimPrefix(s, _paramPrefix); param != s {
+		seg.param = param
 	}
 }
 
@@ -45,7 +57,7 @@ func (seg *segment) nextSegment(ctx context.Context, s string) (*segment, bool) 
 
 	if seg.param != "" {
 		ctx.AddURLParam(seg.param, s)
-		return seg, true
+		return seg.childs[_paramPrefix+seg.param], true
 	}
 
 	return nil, false

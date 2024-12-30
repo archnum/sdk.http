@@ -34,7 +34,7 @@ func (impl *implManager) Router() Router {
 	return impl.router
 }
 
-func notFound(w http.ResponseWriter, r *http.Request) core.Handler {
+func notFound(w http.ResponseWriter) core.Handler {
 	return core.HandlerFunc(
 		func(_ context.Context) error {
 			w.WriteHeader(http.StatusNotFound)
@@ -92,7 +92,7 @@ func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		seg, ok = seg.nextSegment(ctx, s)
 		if !ok {
-			serve(wrap(mws, notFound(w, r)), ctx) //-------------------------------------------------------- 404 -------
+			serve(wrap(mws, notFound(w)), ctx) //----------------------------------------------------------- 404 -------
 			return
 		}
 
