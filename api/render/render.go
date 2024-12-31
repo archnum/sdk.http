@@ -16,6 +16,7 @@ type (
 		WriteError(err ErrorWithStatus)
 	}
 
+	// TODO: un pool ?
 	implRenderer struct {
 		responseWriter http.ResponseWriter
 		request        *http.Request

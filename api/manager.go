@@ -51,23 +51,23 @@ func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	mws := make([]core.MiddlewareFunc, 0, 10)
 	mws = append(mws, seg.middlewares...)
 
-	for _, s := range strings.Split(r.URL.EscapedPath(), "/") {
-		if s == "" {
-			continue
-		}
+	s, path := splitPath(r.URL.EscapedPath())
 
+	for s != "" {
 		seg, ok = seg.nextSegment(rr, s)
 		if !ok {
-			serve(wrap(mws, impl.notFound()), rr) //-------------------------------------------------------- 404 -------
+			serve(wrap(mws, impl.notFound()), rr) ////////////////////////////////////////////////////////// 404 ///////
 			return
 		}
 
 		mws = append(mws, seg.middlewares...)
+
+		s, path = splitPath(path)
 	}
 
 	fn, ok := seg.fns[r.Method]
 	if !ok {
-		serve(wrap(mws, impl.methodNotAllowed(seg.allowedMethods())), rr) //----------_--------------------- 405 -------
+		serve(wrap(mws, impl.methodNotAllowed(seg.allowedMethods())), rr) ////////////////////////////////// 405 ///////
 		return
 	}
 
