@@ -6,13 +6,11 @@
 package api
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 
 	"github.com/archnum/sdk.base/logger"
 	"github.com/archnum/sdk.http/api/core"
-	"github.com/archnum/sdk.http/api/failure"
 	"github.com/archnum/sdk.http/api/render"
 )
 
@@ -35,6 +33,7 @@ func New(p *Params) *implManager {
 	p.fix()
 
 	return &implManager{
+		logger:           p.Logger,
 		router:           newRouter(newSegment()),
 		notFound:         p.NotFound,
 		methodNotAllowed: p.MethodNotAllowed,
@@ -84,7 +83,7 @@ func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func notFound() core.Handler {
 	return core.HandlerFunc(
 		func(rr render.Renderer) error {
-			rr.WriteHeader(http.StatusNotFound)
+			rr.ResponseWriter().WriteHeader(http.StatusNotFound)
 			return nil
 		},
 	)
@@ -94,10 +93,10 @@ func methodNotAllowed(allowedMethods []string) core.Handler {
 	return core.HandlerFunc(
 		func(rr render.Renderer) error {
 			if len(allowedMethods) > 0 {
-				rr.Header().Set("Allow", strings.Join(allowedMethods, ", "))
+				rr.ResponseWriter().Header().Set("Allow", strings.Join(allowedMethods, ", "))
 			}
 
-			rr.WriteHeader(http.StatusMethodNotAllowed)
+			rr.ResponseWriter().WriteHeader(http.StatusMethodNotAllowed)
 
 			return nil
 		},
@@ -118,13 +117,7 @@ func serve(handler core.Handler, rr render.Renderer) {
 		return
 	}
 
-	f := new(failure.Failure)
-
-	if !errors.As(err, f) {
-		f = failure.New(http.StatusInternalServerError, err.Error())
-	}
-
-	rr.WriteError(f)
+	rr.WriteError(err)
 }
 
 /*

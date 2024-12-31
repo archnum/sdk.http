@@ -7,6 +7,7 @@ package middleware
 
 import (
 	"github.com/archnum/sdk.base/logger"
+
 	"github.com/archnum/sdk.http/api/core"
 	"github.com/archnum/sdk.http/api/render"
 )

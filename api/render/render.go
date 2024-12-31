@@ -6,42 +6,54 @@
 package render
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/archnum/sdk.base/kv"
 	"github.com/archnum/sdk.base/logger"
+
+	"github.com/archnum/sdk.http/api/failure"
 	"github.com/archnum/sdk.http/api/util"
 )
 
 type (
 	Renderer interface {
-		http.ResponseWriter
+		ResponseWriter() http.ResponseWriter
+		SetResponseWriter(rw http.ResponseWriter)
 		Request() *http.Request
 		AddURLParam(name, value string)
 		URLParam(name string) (string, bool)
 		WriteData(status int, data any)
-		WriteError(err ErrorWithStatus)
+		WriteError(err error)
 	}
 
 	// TODO: un pool ?
 	// fieldalignment
 	implRenderer struct {
-		http.ResponseWriter
-		request     *http.Request
-		logger      *logger.Logger
-		params      map[string]string
-		contentType string
+		responseWriter http.ResponseWriter
+		request        *http.Request
+		logger         *logger.Logger
+		params         map[string]string
+		contentType    string
 	}
 )
 
 func New(logger *logger.Logger, w http.ResponseWriter, r *http.Request) *implRenderer {
 	return &implRenderer{
-		ResponseWriter: w,
+		responseWriter: w,
 		request:        r,
 		logger:         logger,
 		params:         make(map[string]string),
 		contentType:    util.ContentTypeJSON,
 	}
+}
+
+func (impl *implRenderer) ResponseWriter() http.ResponseWriter {
+	return impl.responseWriter
+}
+
+func (impl *implRenderer) SetResponseWriter(rw http.ResponseWriter) {
+	impl.responseWriter = rw
 }
 
 func (impl *implRenderer) Request() *http.Request {
@@ -58,7 +70,7 @@ func (impl *implRenderer) URLParam(name string) (string, bool) {
 }
 
 func (impl *implRenderer) setContentType() {
-	impl.Header().Set("Content-Type", impl.contentType)
+	impl.responseWriter.Header().Set("Content-Type", impl.contentType)
 }
 
 func (impl *implRenderer) WriteData(status int, data any) {
@@ -85,9 +97,15 @@ func (impl *implRenderer) WriteData(status int, data any) {
 	}
 }
 
-func (impl *implRenderer) WriteError(err ErrorWithStatus) {
+func (impl *implRenderer) WriteError(err error) {
+	f := new(failure.Failure)
+
+	if !errors.As(err, f) {
+		f = failure.New(http.StatusInternalServerError, err.Error())
+	}
+
 	requestID := util.RequestID(impl.request)
-	status := err.Status()
+	status := f.Status()
 
 	if impl.logger != nil {
 		impl.logger.Error( //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
