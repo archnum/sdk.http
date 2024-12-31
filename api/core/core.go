@@ -5,19 +5,19 @@
 
 package core
 
-import "github.com/archnum/sdk.http/api/context"
+import "github.com/archnum/sdk.http/api/render"
 
 type (
 	Handler interface {
-		Serve(ctx context.Context) error
+		Serve(rr render.Renderer) error
 	}
 
-	HandlerFunc    func(ctx context.Context) error
+	HandlerFunc    func(rr render.Renderer) error
 	MiddlewareFunc func(handler Handler) Handler
 )
 
-func (fn HandlerFunc) Serve(ctx context.Context) error {
-	return fn(ctx)
+func (fn HandlerFunc) Serve(rr render.Renderer) error {
+	return fn(rr)
 }
 
 /*

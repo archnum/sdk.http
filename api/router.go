@@ -7,7 +7,6 @@ package api
 
 import (
 	"net/http"
-	"strings"
 
 	"github.com/archnum/sdk.http/api/core"
 )
@@ -40,44 +39,12 @@ func (impl *implRouter) Use(middlewares ...core.MiddlewareFunc) {
 }
 
 func (impl *implRouter) Mount(pattern string, fn func(router Router)) {
-	seg := impl.seg
-
-	for _, s := range strings.Split(pattern, "/") {
-		if s == "" {
-			continue
-		}
-
-		tmp, ok := seg.childs[s]
-		if ok {
-			seg = tmp
-		} else {
-			seg.maybeSetParam(s)
-			seg.childs[s] = newSegment()
-			seg = seg.childs[s]
-		}
-	}
-
+	seg := impl.seg.buildTree(pattern)
 	fn(newRouter(seg))
 }
 
 func (impl *implRouter) handle(method string, pattern string, fn core.HandlerFunc) {
-	seg := impl.seg
-
-	for _, s := range strings.Split(pattern, "/") {
-		if s == "" {
-			continue
-		}
-
-		tmp, ok := seg.childs[s]
-		if ok {
-			seg = tmp
-		} else {
-			seg.maybeSetParam(s)
-			seg.childs[s] = newSegment()
-			seg = seg.childs[s]
-		}
-	}
-
+	seg := impl.seg.buildTree(pattern)
 	seg.addHandlerFunc(method, fn)
 }
 

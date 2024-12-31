@@ -3,12 +3,12 @@
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 */
 
-package context
+package render
 
 import "net/http"
 
 type (
-	Context interface {
+	Renderer interface {
 		ResponseWriter() http.ResponseWriter
 		Request() *http.Request
 		AddURLParam(name, value string)
@@ -16,39 +16,39 @@ type (
 		WriteError(err ErrorWithStatus)
 	}
 
-	implContext struct {
+	implRenderer struct {
 		responseWriter http.ResponseWriter
 		request        *http.Request
 		params         map[string]string
 	}
 )
 
-func New(w http.ResponseWriter, r *http.Request) *implContext {
-	return &implContext{
+func New(w http.ResponseWriter, r *http.Request) *implRenderer {
+	return &implRenderer{
 		responseWriter: w,
 		request:        r,
 		params:         make(map[string]string),
 	}
 }
 
-func (ctx *implContext) ResponseWriter() http.ResponseWriter {
+func (ctx *implRenderer) ResponseWriter() http.ResponseWriter {
 	return ctx.responseWriter
 }
 
-func (ctx *implContext) Request() *http.Request {
+func (ctx *implRenderer) Request() *http.Request {
 	return ctx.request
 }
 
-func (ctx *implContext) AddURLParam(name, value string) {
+func (ctx *implRenderer) AddURLParam(name, value string) {
 	ctx.params[name] = value
 }
 
-func (ctx *implContext) URLParam(name string) (string, bool) {
+func (ctx *implRenderer) URLParam(name string) (string, bool) {
 	value, ok := ctx.params[name]
 	return value, ok
 }
 
-func (ctx *implContext) WriteError(err ErrorWithStatus) {
+func (ctx *implRenderer) WriteError(err ErrorWithStatus) {
 	// TODO
 	ctx.responseWriter.WriteHeader(500)
 }

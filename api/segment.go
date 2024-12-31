@@ -8,8 +8,8 @@ package api
 import (
 	"strings"
 
-	"github.com/archnum/sdk.http/api/context"
 	"github.com/archnum/sdk.http/api/core"
+	"github.com/archnum/sdk.http/api/render"
 )
 
 const (
@@ -49,18 +49,39 @@ func (seg *segment) addHandlerFunc(method string, fn core.HandlerFunc) {
 	seg.fns[method] = fn
 }
 
-func (seg *segment) nextSegment(ctx context.Context, s string) (*segment, bool) {
+func (seg *segment) nextSegment(rr render.Renderer, s string) (*segment, bool) {
 	tmp, ok := seg.childs[s]
 	if ok {
 		return tmp, true
 	}
 
 	if seg.param != "" {
-		ctx.AddURLParam(seg.param, s)
+		rr.AddURLParam(seg.param, s)
 		return seg.childs[_paramPrefix+seg.param], true
 	}
 
 	return nil, false
+}
+
+func (seg *segment) buildTree(pattern string) *segment {
+	nseg := seg
+
+	for _, s := range strings.Split(pattern, "/") {
+		if s == "" {
+			continue
+		}
+
+		tmp, ok := nseg.childs[s]
+		if ok {
+			nseg = tmp
+		} else {
+			nseg.maybeSetParam(s)
+			nseg.childs[s] = newSegment()
+			nseg = nseg.childs[s]
+		}
+	}
+
+	return nseg
 }
 
 func (seg *segment) allowedMethods() []string {

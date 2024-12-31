@@ -7,16 +7,16 @@ package middleware
 
 import (
 	"github.com/archnum/sdk.base/logger"
-	"github.com/archnum/sdk.http/api/context"
 	"github.com/archnum/sdk.http/api/core"
+	"github.com/archnum/sdk.http/api/render"
 )
 
 func Recover(logger *logger.Logger) func(core.Handler) core.Handler {
 	return func(next core.Handler) core.Handler {
 		return core.HandlerFunc(
-			func(ctx context.Context) error {
+			func(rr render.Renderer) error {
 				// TODO
-				return next.Serve(ctx)
+				return next.Serve(rr)
 			},
 		)
 	}

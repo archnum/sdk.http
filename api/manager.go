@@ -10,9 +10,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/archnum/sdk.http/api/context"
 	"github.com/archnum/sdk.http/api/core"
 	"github.com/archnum/sdk.http/api/failure"
+	"github.com/archnum/sdk.http/api/render"
 )
 
 type (
@@ -45,7 +45,7 @@ func (impl *implManager) Router() Router {
 func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var ok bool
 
-	ctx := context.New(w, r)
+	rr := render.New(w, r)
 	seg := impl.router.seg
 
 	mws := make([]core.MiddlewareFunc, 0, 10)
@@ -56,9 +56,9 @@ func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		seg, ok = seg.nextSegment(ctx, s)
+		seg, ok = seg.nextSegment(rr, s)
 		if !ok {
-			serve(wrap(mws, impl.notFound()), ctx) //------------------------------------------------------- 404 -------
+			serve(wrap(mws, impl.notFound()), rr) //-------------------------------------------------------- 404 -------
 			return
 		}
 
@@ -67,17 +67,17 @@ func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	fn, ok := seg.fns[r.Method]
 	if !ok {
-		serve(wrap(mws, impl.methodNotAllowed(seg.allowedMethods())), ctx) //------------------------------- 405 -------
+		serve(wrap(mws, impl.methodNotAllowed(seg.allowedMethods())), rr) //----------_--------------------- 405 -------
 		return
 	}
 
-	serve(wrap(mws, fn), ctx)
+	serve(wrap(mws, fn), rr)
 }
 
 func notFound() core.Handler {
 	return core.HandlerFunc(
-		func(ctx context.Context) error {
-			ctx.ResponseWriter().WriteHeader(http.StatusNotFound)
+		func(rr render.Renderer) error {
+			rr.ResponseWriter().WriteHeader(http.StatusNotFound)
 			return nil
 		},
 	)
@@ -85,12 +85,12 @@ func notFound() core.Handler {
 
 func methodNotAllowed(allowedMethods []string) core.Handler {
 	return core.HandlerFunc(
-		func(ctx context.Context) error {
+		func(rr render.Renderer) error {
 			if len(allowedMethods) > 0 {
-				ctx.ResponseWriter().Header().Set("Allow", strings.Join(allowedMethods, ", "))
+				rr.ResponseWriter().Header().Set("Allow", strings.Join(allowedMethods, ", "))
 			}
 
-			ctx.ResponseWriter().WriteHeader(http.StatusMethodNotAllowed)
+			rr.ResponseWriter().WriteHeader(http.StatusMethodNotAllowed)
 
 			return nil
 		},
@@ -105,8 +105,8 @@ func wrap(middlewares []core.MiddlewareFunc, handler core.Handler) core.Handler 
 	return handler
 }
 
-func serve(handler core.Handler, ctx context.Context) {
-	err := handler.Serve(ctx)
+func serve(handler core.Handler, rr render.Renderer) {
+	err := handler.Serve(rr)
 	if err == nil {
 		return
 	}
@@ -117,7 +117,7 @@ func serve(handler core.Handler, ctx context.Context) {
 		f = failure.New(http.StatusInternalServerError, err.Error())
 	}
 
-	ctx.WriteError(f)
+	rr.WriteError(f)
 }
 
 /*
