@@ -24,10 +24,11 @@ type (
 	}
 
 	// TODO: un pool ?
+	// fieldalignment
 	implRenderer struct {
 		http.ResponseWriter
-		logger      *logger.Logger
 		request     *http.Request
+		logger      *logger.Logger
 		params      map[string]string
 		contentType string
 	}
