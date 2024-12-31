@@ -5,10 +5,14 @@
 
 package api
 
-import "github.com/archnum/sdk.http/api/core"
+import (
+	"github.com/archnum/sdk.base/logger"
+	"github.com/archnum/sdk.http/api/core"
+)
 
 type (
 	Params struct {
+		Logger           *logger.Logger
 		NotFound         func() core.Handler
 		MethodNotAllowed func(allowedMethods []string) core.Handler
 	}

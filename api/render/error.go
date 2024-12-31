@@ -10,6 +10,11 @@ type (
 		error
 		Status() int
 	}
+
+	dataError struct {
+		Error     string `json:"error" xml:"error" yaml:"error"`
+		RequestID string `json:"request_id" xml:"request_id" yaml:"request_id"`
+	}
 )
 
 /*

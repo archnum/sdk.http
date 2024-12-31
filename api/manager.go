@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/archnum/sdk.base/logger"
 	"github.com/archnum/sdk.http/api/core"
 	"github.com/archnum/sdk.http/api/failure"
 	"github.com/archnum/sdk.http/api/render"
@@ -22,6 +23,7 @@ type (
 	}
 
 	implManager struct {
+		logger           *logger.Logger
 		router           *implRouter
 		notFound         func() core.Handler
 		methodNotAllowed func(allowedMethods []string) core.Handler
@@ -45,7 +47,7 @@ func (impl *implManager) Router() Router {
 func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var ok bool
 
-	rr := render.New(w, r)
+	rr := render.New(impl.logger, w, r)
 	seg := impl.router.seg
 
 	mws := make([]core.MiddlewareFunc, 0, 10)
@@ -77,7 +79,7 @@ func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func notFound() core.Handler {
 	return core.HandlerFunc(
 		func(rr render.Renderer) error {
-			rr.ResponseWriter().WriteHeader(http.StatusNotFound)
+			rr.WriteHeader(http.StatusNotFound)
 			return nil
 		},
 	)
@@ -87,10 +89,10 @@ func methodNotAllowed(allowedMethods []string) core.Handler {
 	return core.HandlerFunc(
 		func(rr render.Renderer) error {
 			if len(allowedMethods) > 0 {
-				rr.ResponseWriter().Header().Set("Allow", strings.Join(allowedMethods, ", "))
+				rr.Header().Set("Allow", strings.Join(allowedMethods, ", "))
 			}
 
-			rr.ResponseWriter().WriteHeader(http.StatusMethodNotAllowed)
+			rr.WriteHeader(http.StatusMethodNotAllowed)
 
 			return nil
 		},
