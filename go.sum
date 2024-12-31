@@ -1,7 +1,7 @@
 github.com/archnum/sdk.application v0.0.0-20241230185235-03943dfbd71b h1:OA4H29xxDXVDG4Sxn3Q+IwtcrQY6poEAqBohlfcjANs=
 github.com/archnum/sdk.application v0.0.0-20241230185235-03943dfbd71b/go.mod h1:BFEPbmXRHL+OUBwfCMUWlMvhzh0xVXYk1Qodm5AoCNQ=
-github.com/archnum/sdk.base v0.0.0-20241230184706-146eba68a476 h1:C+PCW5ChA8so4JPG5P2BcqmIL7sjYhsXPSuy8OoSLlU=
-github.com/archnum/sdk.base v0.0.0-20241230184706-146eba68a476/go.mod h1:h5+FkrHpSTmuatLr4efkSIUh7hldsT+BNy7OHKo1ZNk=
+github.com/archnum/sdk.base v0.0.0-20241231015622-16930de09459 h1:wCkwDhQKVOcdI8qCKttJF8xfGNiOW+GziGPMz3d4Mqg=
+github.com/archnum/sdk.base v0.0.0-20241231015622-16930de09459/go.mod h1:h5+FkrHpSTmuatLr4efkSIUh7hldsT+BNy7OHKo1ZNk=
 github.com/coreos/go-systemd/v22 v22.5.0 h1:RrqgGjYQKalulkV8NGVIfkXQf6YYmOyiJKk8iXXhfZs=
 github.com/coreos/go-systemd/v22 v22.5.0/go.mod h1:Y58oyj3AT4RCenI/lSvhwexgC+NSVTIJ3seZv2GcEnc=
 github.com/godbus/dbus/v5 v5.0.4/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
