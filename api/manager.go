@@ -19,6 +19,7 @@ import (
 type (
 	Manager interface {
 		http.Handler
+		Logger() *logger.Logger
 		Router() Router
 	}
 
@@ -38,6 +39,10 @@ func New(p *Params) *implManager {
 		notFound:         p.NotFound,
 		methodNotAllowed: p.MethodNotAllowed,
 	}
+}
+
+func (impl *implManager) Logger() *logger.Logger {
+	return impl.logger
 }
 
 func (impl *implManager) Router() Router {
