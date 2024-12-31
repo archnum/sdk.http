@@ -1,5 +1,5 @@
-github.com/archnum/sdk.application v0.0.0-20241230164305-fa7ca8f3f3ec h1:VqREsZy17ZnfMeIBF52H632h1I5jh8G/u5iBXrZpN1Q=
-github.com/archnum/sdk.application v0.0.0-20241230164305-fa7ca8f3f3ec/go.mod h1:hbyIFtNI0TGiC7VxKkjv9eBCBnoM1nyzXbYCDN/6xko=
+github.com/archnum/sdk.application v0.0.0-20241230185235-03943dfbd71b h1:OA4H29xxDXVDG4Sxn3Q+IwtcrQY6poEAqBohlfcjANs=
+github.com/archnum/sdk.application v0.0.0-20241230185235-03943dfbd71b/go.mod h1:BFEPbmXRHL+OUBwfCMUWlMvhzh0xVXYk1Qodm5AoCNQ=
 github.com/archnum/sdk.base v0.0.0-20241230184706-146eba68a476 h1:C+PCW5ChA8so4JPG5P2BcqmIL7sjYhsXPSuy8OoSLlU=
 github.com/archnum/sdk.base v0.0.0-20241230184706-146eba68a476/go.mod h1:h5+FkrHpSTmuatLr4efkSIUh7hldsT+BNy7OHKo1ZNk=
 github.com/coreos/go-systemd/v22 v22.5.0 h1:RrqgGjYQKalulkV8NGVIfkXQf6YYmOyiJKk8iXXhfZs=
