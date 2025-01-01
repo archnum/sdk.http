@@ -13,6 +13,7 @@ import (
 	_base "github.com/archnum/sdk.base/util"
 
 	"github.com/archnum/sdk.http/api/core"
+	"github.com/archnum/sdk.http/api/failure"
 	"github.com/archnum/sdk.http/api/render"
 	"github.com/archnum/sdk.http/api/util"
 )
@@ -20,7 +21,7 @@ import (
 func Recover(logger *logger.Logger) func(core.Handler) core.Handler {
 	return func(next core.Handler) core.Handler {
 		return core.HandlerFunc(
-			func(rr render.Renderer) error {
+			func(rr render.Renderer) (err error) {
 				defer func() {
 					if data := recover(); data != nil {
 						if data == http.ErrAbortHandler {
@@ -34,7 +35,12 @@ func Recover(logger *logger.Logger) func(core.Handler) core.Handler {
 							kv.String("stack", _base.Stack(5)),
 						)
 
-						rr.ResponseWriter().WriteHeader(http.StatusInternalServerError)
+						err = failure.New( /////////////////////////////////////////////////////////////////////////////
+							http.StatusInternalServerError,
+							"Request error recovered",
+							kv.String("id", util.RequestID(rr.Request())),
+							kv.Any("data", data),
+						)
 					}
 				}()
 
