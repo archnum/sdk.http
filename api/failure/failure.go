@@ -6,33 +6,58 @@
 package failure
 
 import (
+	"net/http"
+
 	"github.com/archnum/sdk.base/failure"
 	"github.com/archnum/sdk.base/kv"
 )
 
 type (
-	Failure struct {
-		*failure.Failure
+	WithStatus struct {
+		error
 		status int
 	}
 )
 
-func New(status int, msg string, kvs ...kv.KeyValue) *Failure {
-	return &Failure{
-		Failure: failure.New(msg, kvs...),
-		status:  status,
+func New(status int, msg string, kvs ...kv.KeyValue) *WithStatus {
+	return &WithStatus{
+		error:  failure.New(msg, kvs...),
+		status: status,
 	}
 }
 
-func WithMessage(status int, cause error, msg string, kvs ...kv.KeyValue) *Failure {
-	return &Failure{
-		Failure: failure.WithMessage(cause, msg, kvs...),
-		status:  status,
+func WithMessage(status int, cause error, msg string, kvs ...kv.KeyValue) *WithStatus {
+	return &WithStatus{
+		error:  failure.WithMessage(cause, msg, kvs...),
+		status: status,
 	}
 }
 
-func (f *Failure) Status() int {
-	return f.status
+func WithError(status int, err error) *WithStatus {
+	if err == nil {
+		return nil
+	}
+
+	return &WithStatus{
+		error:  err,
+		status: status,
+	}
+}
+
+func BadRequest(err error) *WithStatus {
+	return WithError(http.StatusBadRequest, err)
+}
+
+func InternalServerError(err error) *WithStatus {
+	return WithError(http.StatusInternalServerError, err)
+}
+
+func (ws *WithStatus) Unwrap() error {
+	return ws.error
+}
+
+func (ws *WithStatus) Status() int {
+	return ws.status
 }
 
 /*

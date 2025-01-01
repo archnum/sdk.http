@@ -103,10 +103,10 @@ func (impl *implRenderer) WriteData(status int, data any) {
 }
 
 func (impl *implRenderer) WriteError(err error) {
-	f := new(failure.Failure)
+	var f *failure.WithStatus
 
-	if !errors.As(err, f) {
-		f = failure.New(http.StatusInternalServerError, err.Error())
+	if !errors.As(err, &f) {
+		f = failure.WithError(http.StatusInternalServerError, err)
 	}
 
 	requestID := util.RequestID(impl.request)
