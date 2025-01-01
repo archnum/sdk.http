@@ -21,13 +21,13 @@ const (
 
 type (
 	Config struct {
-		Addr         string        `dm:"addr"`
-		CertFile     string        `dm:"cert_file"`
-		KeyFile      string        `dm:"key_file"`
-		CAFile       string        `dm:"ca_file"`
-		IdleTimeout  time.Duration `dm:"idle_timeout"`
-		ReadTimeout  time.Duration `dm:"read_timeout"`
-		WriteTimeout time.Duration `dm:"write_timeout"`
+		Addr         string        `ms:"addr"`
+		CertFile     string        `ms:"cert_file"`
+		KeyFile      string        `ms:"key_file"`
+		CAFile       string        `ms:"ca_file"`
+		IdleTimeout  time.Duration `ms:"idle_timeout"`
+		ReadTimeout  time.Duration `ms:"read_timeout"`
+		WriteTimeout time.Duration `ms:"write_timeout"`
 	}
 )
 
