@@ -6,6 +6,7 @@
 package failure
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/archnum/sdk.base/failure"
@@ -36,6 +37,11 @@ func WithMessage(status int, cause error, msg string, kvs ...kv.KeyValue) *WithS
 func WithError(status int, err error) *WithStatus {
 	if err == nil {
 		return nil
+	}
+
+	var f *WithStatus
+	if errors.As(err, &f) {
+		return f
 	}
 
 	return &WithStatus{
