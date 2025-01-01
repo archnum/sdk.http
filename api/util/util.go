@@ -8,9 +8,9 @@ package util
 import "net/http"
 
 const (
-	ContentTypeJSON = "application/json; charset=utf-8"
-	ContentTypeXML  = "text/xml; charset=utf-8"
-	ContentTypeYAML = "text/x-yaml; charset=utf-8"
+	ContentTypeJSON = "application/json"
+	ContentTypeXML  = "application/xml"
+	ContentTypeYAML = "application/yaml"
 
 	HeaderXRequestID = "X-Request-Id"
 )

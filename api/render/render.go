@@ -23,6 +23,7 @@ type (
 		Request() *http.Request
 		AddURLParam(name, value string)
 		URLParam(name string) (string, bool)
+		SetContentType(ct string)
 		WriteData(status int, data any)
 		WriteError(err error)
 	}
@@ -71,6 +72,10 @@ func (impl *implRenderer) URLParam(name string) (string, bool) {
 
 func (impl *implRenderer) setContentType() {
 	impl.responseWriter.Header().Set("Content-Type", impl.contentType)
+}
+
+func (impl *implRenderer) SetContentType(ct string) {
+	impl.contentType = ct
 }
 
 func (impl *implRenderer) WriteData(status int, data any) {
