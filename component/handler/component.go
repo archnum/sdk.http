@@ -11,6 +11,10 @@ import (
 	"github.com/archnum/sdk.application/container"
 )
 
+const (
+	_name = "http.handler"
+)
+
 type (
 	Builder func() (http.Handler, error)
 
@@ -22,9 +26,13 @@ type (
 
 func New(c container.Container, builder Builder) *implComponent {
 	return &implComponent{
-		Component: container.NewComponent("http.handler", c),
+		Component: container.NewComponent(_name, c),
 		builder:   builder,
 	}
+}
+
+func Value(c container.Container) http.Handler {
+	return container.Value[http.Handler](c, _name)
 }
 
 //////////////////////

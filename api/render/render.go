@@ -24,6 +24,7 @@ type (
 		AddURLParam(name, value string)
 		URLParam(name string) (string, bool)
 		SetContentType(ct string)
+		NoContent()
 		WriteData(status int, data any)
 		WriteError(err error)
 	}
@@ -76,6 +77,10 @@ func (impl *implRenderer) setContentType() {
 
 func (impl *implRenderer) SetContentType(ct string) {
 	impl.contentType = ct
+}
+
+func (impl *implRenderer) NoContent() {
+	impl.responseWriter.WriteHeader(http.StatusNoContent)
 }
 
 func (impl *implRenderer) WriteData(status int, data any) {

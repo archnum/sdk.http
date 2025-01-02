@@ -16,7 +16,9 @@ import (
 	"github.com/archnum/sdk.base/logger"
 	"github.com/archnum/sdk.base/logger/level"
 	"github.com/archnum/sdk.base/util"
-	"github.com/archnum/sdk.http/component"
+
+	_logger "github.com/archnum/sdk.application/component/logger"
+	"github.com/archnum/sdk.http/component/handler"
 	"github.com/archnum/sdk.http/server"
 )
 
@@ -41,11 +43,11 @@ func New(c container.Container) *implComponent {
 
 func (impl *implComponent) Build() error {
 	c := impl.C()
-	logger := container.Logger(c)
+	logger := _logger.Value(c)
 
 	p := &server.Params{
 		Config:  config(c),
-		Handler: component.Handler(c),
+		Handler: handler.Value(c),
 		Logger:  logger.NewStdLogger(level.Error, "[http.server]", log.Llongfile),
 	}
 

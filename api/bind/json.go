@@ -27,11 +27,7 @@ func decodeJSON(body io.ReadCloser, maxSize int64, to any) error {
 
 		switch {
 		case errors.As(err, &syntaxError):
-			return failure.New( ////////////////////////////////////////////////////////////////////////////////////////
-				http.StatusBadRequest,
-				syntaxError.Error(),
-				kv.Int64("offset", syntaxError.Offset),
-			)
+			return failure.New(http.StatusBadRequest, syntaxError.Error()) /////////////////////////////////////////////
 
 		case errors.Is(err, io.ErrUnexpectedEOF):
 			return failure.New(http.StatusBadRequest, "request body contains badly-formed JSON") ///////////////////////
@@ -42,7 +38,6 @@ func decodeJSON(body io.ReadCloser, maxSize int64, to any) error {
 				"request body contains an invalid value for a field",
 				kv.String("value", unmarshalTypeError.Value),
 				kv.String("field", unmarshalTypeError.Field),
-				kv.Int64("offset", unmarshalTypeError.Offset),
 			)
 
 		case strings.HasPrefix(err.Error(), "json: unknown field "):
