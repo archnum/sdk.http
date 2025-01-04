@@ -63,14 +63,12 @@ func (impl *implComponent) Build() error {
 }
 
 func (impl *implComponent) Start() error {
-	errCh := make(chan error, 1)
+	gt := gotracker.New(gotracker.WithLogger(impl.logger))
 
-	impl.goTracker = gotracker.New(gotracker.WithLogger(impl.logger))
-
-	impl.goTracker.Go( //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+	gt.Go( //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 		"http.server",
-		func(_ chan struct{}) {
-			defer close(errCh)
+		func(_ context.Context) error {
+			defer gt.Stop()
 
 			server := impl.server
 
@@ -79,15 +77,15 @@ func (impl *implComponent) Start() error {
 				kv.String("addr", server.Addr()),
 			)
 
-			errCh <- server.Start()
+			return server.Start()
 		},
 	)
 
+	impl.goTracker = gt
+
 	select {
-	case err := <-errCh:
-		impl.goTracker.Stop()
-		impl.goTracker.Wait()
-		return err
+	case <-gt.Done():
+		return gt.Err()
 	case <-time.After(100 * time.Millisecond):
 		return nil
 	}
