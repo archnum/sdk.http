@@ -4,7 +4,7 @@ go 1.23.4
 
 require (
 	github.com/archnum/sdk.application v0.0.0-20250103225614-fb4d1b5d2244
-	github.com/archnum/sdk.base v0.0.0-20250103224116-75940577a9f8
+	github.com/archnum/sdk.base v0.0.0-20250104131552-c800301e8b7b
 	gopkg.in/yaml.v3 v3.0.1
 )
 
