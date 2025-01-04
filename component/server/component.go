@@ -22,6 +22,10 @@ import (
 	"github.com/archnum/sdk.http/server"
 )
 
+const (
+	Name = "http.server"
+)
+
 type (
 	implComponent struct {
 		*container.Component
@@ -33,7 +37,7 @@ type (
 
 func New(c container.Container) *implComponent {
 	return &implComponent{
-		Component: container.NewComponent("http.server", c),
+		Component: container.NewComponent(Name, c),
 	}
 }
 
@@ -66,7 +70,7 @@ func (impl *implComponent) Start() error {
 	gt := gotracker.New(gotracker.WithLogger(impl.logger))
 
 	gt.Go( //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-		"http.server",
+		Name,
 		func(_ context.Context) error {
 			defer gt.Stop()
 
