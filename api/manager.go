@@ -60,6 +60,10 @@ func (impl *implManager) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s, path := splitPath(r.URL.EscapedPath())
 
 	for s != "" {
+		if seg.everything {
+			break
+		}
+
 		seg, ok = seg.nextSegment(rr, s)
 		if !ok {
 			serve(wrap(mws, impl.notFound()), rr) ////////////////////////////////////////////////////////// 404 ///////

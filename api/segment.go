@@ -14,6 +14,7 @@ import (
 
 const (
 	_paramPrefix = ":"
+	_everything  = "..."
 )
 
 type (
@@ -22,6 +23,7 @@ type (
 		fns         map[string]core.HandlerFunc
 		param       string
 		middlewares []core.MiddlewareFunc
+		everything  bool
 	}
 )
 
@@ -74,6 +76,9 @@ func (seg *segment) buildTree(pattern string) *segment {
 		tmp, ok := nseg.childs[s]
 		if ok {
 			nseg = tmp
+		} else if s == _everything {
+			nseg.everything = true
+			break
 		} else {
 			nseg.maybeSetParam(s)
 			nseg.childs[s] = newSegment()
