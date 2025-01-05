@@ -11,12 +11,12 @@ import (
 
 	"github.com/archnum/sdk.base/kv"
 	"github.com/archnum/sdk.base/uuid"
-	"github.com/archnum/sdk.http/api/failure"
+	"github.com/archnum/sdk.http/api/apierr"
 	"github.com/archnum/sdk.http/api/render"
 )
 
 func errBadType(name, expected, value string) error {
-	return failure.New( ////////////////////////////////////////////////////////////////////////////////////////////////
+	return apierr.New( /////////////////////////////////////////////////////////////////////////////////////////////////
 		http.StatusBadRequest,
 		"bad type for this path parameter",
 		kv.String("name", name),
@@ -42,7 +42,7 @@ func PathString(rr render.Renderer, name string) (string, error) {
 	value, ok := rr.URLParam(name)
 	if !ok {
 		return "",
-			failure.New( ///////////////////////////////////////////////////////////////////////////////////////////////
+			apierr.New( ////////////////////////////////////////////////////////////////////////////////////////////////
 				http.StatusInternalServerError,
 				"this path parameter doesn't exist",
 				kv.String("name", name),

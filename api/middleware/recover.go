@@ -12,8 +12,8 @@ import (
 	"github.com/archnum/sdk.base/logger"
 	_base "github.com/archnum/sdk.base/util"
 
+	"github.com/archnum/sdk.http/api/apierr"
 	"github.com/archnum/sdk.http/api/core"
-	"github.com/archnum/sdk.http/api/failure"
 	"github.com/archnum/sdk.http/api/render"
 	"github.com/archnum/sdk.http/api/util"
 )
@@ -35,7 +35,7 @@ func Recover(logger *logger.Logger) func(core.Handler) core.Handler {
 							kv.String("stack", _base.Stack(5)),
 						)
 
-						err = failure.New( /////////////////////////////////////////////////////////////////////////////
+						err = apierr.New( //////////////////////////////////////////////////////////////////////////////
 							http.StatusInternalServerError,
 							"Request error recovered",
 							kv.String("id", util.RequestID(rr.Request())),

@@ -3,7 +3,7 @@
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 */
 
-package failure
+package apierr
 
 import (
 	"errors"
@@ -39,9 +39,9 @@ func WithError(status int, err error) *WithStatus {
 		return nil
 	}
 
-	var f *WithStatus
-	if errors.As(err, &f) {
-		return f
+	var e *WithStatus
+	if errors.As(err, &e) {
+		return e
 	}
 
 	return &WithStatus{
@@ -52,6 +52,10 @@ func WithError(status int, err error) *WithStatus {
 
 func BadRequest(err error) *WithStatus {
 	return WithError(http.StatusBadRequest, err)
+}
+
+func NotFound(err error) *WithStatus {
+	return WithError(http.StatusNotFound, err)
 }
 
 func InternalServerError(err error) *WithStatus {

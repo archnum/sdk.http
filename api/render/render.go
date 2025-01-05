@@ -12,7 +12,7 @@ import (
 	"github.com/archnum/sdk.base/kv"
 	"github.com/archnum/sdk.base/logger"
 
-	"github.com/archnum/sdk.http/api/failure"
+	"github.com/archnum/sdk.http/api/apierr"
 	"github.com/archnum/sdk.http/api/util"
 )
 
@@ -113,10 +113,10 @@ func (impl *implRenderer) WriteData(status int, data any) {
 }
 
 func (impl *implRenderer) WriteError(err error) {
-	var f *failure.WithStatus
+	var f *apierr.WithStatus
 
 	if !errors.As(err, &f) {
-		f = failure.WithError(http.StatusInternalServerError, err)
+		f = apierr.WithError(http.StatusInternalServerError, err)
 	}
 
 	requestID := util.RequestID(impl.request)

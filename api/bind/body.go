@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/archnum/sdk.base/kv"
-	"github.com/archnum/sdk.http/api/failure"
+	"github.com/archnum/sdk.http/api/apierr"
 	"github.com/archnum/sdk.http/api/render"
 )
 
@@ -28,7 +28,7 @@ func Body(rr render.Renderer, maxSize int64, to any) error {
 		return decodeJSON(r.Body, maxSize, to)
 	}
 
-	return failure.New( ////////////////////////////////////////////////////////////////////////////////////////////////
+	return apierr.New( /////////////////////////////////////////////////////////////////////////////////////////////////
 		http.StatusUnsupportedMediaType,
 		"Unsupported content Type",
 		kv.String("content-type", contentType),

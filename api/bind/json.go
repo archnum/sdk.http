@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/archnum/sdk.base/kv"
-	"github.com/archnum/sdk.http/api/failure"
+	"github.com/archnum/sdk.http/api/apierr"
 )
 
 func decodeJSON(body io.ReadCloser, maxSize int64, to any) error {
@@ -27,13 +27,13 @@ func decodeJSON(body io.ReadCloser, maxSize int64, to any) error {
 
 		switch {
 		case errors.As(err, &syntaxError):
-			return failure.New(http.StatusBadRequest, syntaxError.Error()) /////////////////////////////////////////////
+			return apierr.New(http.StatusBadRequest, syntaxError.Error()) //////////////////////////////////////////////
 
 		case errors.Is(err, io.ErrUnexpectedEOF):
-			return failure.New(http.StatusBadRequest, "request body contains badly-formed JSON") ///////////////////////
+			return apierr.New(http.StatusBadRequest, "request body contains badly-formed JSON") ////////////////////////
 
 		case errors.As(err, &unmarshalTypeError):
-			return failure.New( ////////////////////////////////////////////////////////////////////////////////////////
+			return apierr.New( /////////////////////////////////////////////////////////////////////////////////////////
 				http.StatusBadRequest,
 				"request body contains an invalid value for a field",
 				kv.String("value", unmarshalTypeError.Value),
@@ -41,29 +41,29 @@ func decodeJSON(body io.ReadCloser, maxSize int64, to any) error {
 			)
 
 		case strings.HasPrefix(err.Error(), "json: unknown field "):
-			return failure.New( ////////////////////////////////////////////////////////////////////////////////////////
+			return apierr.New( /////////////////////////////////////////////////////////////////////////////////////////
 				http.StatusBadRequest,
 				"request body contains an unknown field",
 				kv.String("field", strings.TrimPrefix(err.Error(), "json: unknown field ")),
 			)
 
 		case errors.Is(err, io.EOF):
-			return failure.New(http.StatusBadRequest, "request body must not be empty") ////////////////////////////////
+			return apierr.New(http.StatusBadRequest, "request body must not be empty") /////////////////////////////////
 
 		case err.Error() == "http: request body too large":
-			return failure.New( ////////////////////////////////////////////////////////////////////////////////////////
+			return apierr.New( /////////////////////////////////////////////////////////////////////////////////////////
 				http.StatusRequestEntityTooLarge,
 				"the request body is too large",
 				kv.Int64("max_size", maxSize),
 			)
 
 		default:
-			return failure.New(http.StatusInternalServerError, err.Error()) ////////////////////////////////////////////
+			return apierr.New(http.StatusInternalServerError, err.Error()) /////////////////////////////////////////////
 		}
 	}
 
 	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
-		return failure.New( ////////////////////////////////////////////////////////////////////////////////////////////
+		return apierr.New( /////////////////////////////////////////////////////////////////////////////////////////////
 			http.StatusBadRequest,
 			"request body must only contain a single JSON object",
 		)
