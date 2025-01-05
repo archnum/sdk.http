@@ -39,9 +39,9 @@ func WithError(status int, err error) *WithStatus {
 		return nil
 	}
 
-	var e *WithStatus
-	if errors.As(err, &e) {
-		return e
+	var ae *WithStatus
+	if errors.As(err, &ae) {
+		return ae
 	}
 
 	return &WithStatus{

@@ -113,14 +113,14 @@ func (impl *implRenderer) WriteData(status int, data any) {
 }
 
 func (impl *implRenderer) WriteError(err error) {
-	var f *apierr.WithStatus
+	var ae *apierr.WithStatus
 
-	if !errors.As(err, &f) {
-		f = apierr.WithError(http.StatusInternalServerError, err)
+	if !errors.As(err, &ae) {
+		ae = apierr.WithError(http.StatusInternalServerError, err)
 	}
 
 	requestID := util.RequestID(impl.request)
-	status := f.Status()
+	status := ae.Status()
 
 	if impl.logger != nil {
 		impl.logger.Error( //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
