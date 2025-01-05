@@ -35,9 +35,9 @@ func Value(c container.Container) http.Handler {
 	return container.Value[http.Handler](c, _name)
 }
 
-//////////////////////
-/// Implementation ///
-//////////////////////
+/////////////////
+/// Component ///
+/////////////////
 
 func (impl *implComponent) Build() error {
 	handler, err := impl.builder()

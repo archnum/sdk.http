@@ -41,9 +41,9 @@ func New(c container.Container) *implComponent {
 	}
 }
 
-//////////////////////
-/// Implementation ///
-//////////////////////
+/////////////////
+/// Component ///
+/////////////////
 
 func (impl *implComponent) Build() error {
 	c := impl.C()
