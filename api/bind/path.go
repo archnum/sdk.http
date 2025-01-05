@@ -43,7 +43,7 @@ func PathString(rr render.Renderer, name string) (string, error) {
 	if !ok {
 		return "",
 			failure.New( ///////////////////////////////////////////////////////////////////////////////////////////////
-				http.StatusBadRequest,
+				http.StatusInternalServerError,
 				"this path parameter doesn't exist",
 				kv.String("name", name),
 			)
