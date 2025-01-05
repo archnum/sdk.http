@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/archnum/sdk.http/api/core"
+	"github.com/archnum/sdk.http/api/render"
 )
 
 type (
@@ -21,6 +22,7 @@ type (
 		Patch(pattern string, fn core.HandlerFunc)
 		Post(pattern string, fn core.HandlerFunc)
 		Put(pattern string, fn core.HandlerFunc)
+		Static(fs http.FileSystem)
 	}
 
 	implRouter struct {
@@ -70,6 +72,17 @@ func (impl *implRouter) Post(pattern string, fn core.HandlerFunc) {
 
 func (impl *implRouter) Put(pattern string, fn core.HandlerFunc) {
 	impl.handle(http.MethodPut, pattern, fn)
+}
+
+func (impl *implRouter) Static(fs http.FileSystem) {
+	impl.handle(
+		http.MethodGet,
+		"/static/...",
+		func(rr render.Renderer) error {
+			http.StripPrefix("/static", http.FileServer(fs)).ServeHTTP(rr.ResponseWriter(), rr.Request())
+			return nil
+		},
+	)
 }
 
 /*
